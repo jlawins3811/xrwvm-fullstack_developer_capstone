@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Car Dealerships - Dealers List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            margin-bottom: 2rem;
+        }
+        nav a {
+            margin-right: 1rem;
+            text-decoration: none;
+            color: #007bff;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px #ccc;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        footer {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Car Dealerships</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/dealers/">Dealers</a>
+            <a href="/login">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Available Dealers</h2>
+        <p>Browse the list of trusted car dealerships near you.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Dealer Name</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Address</th>
+                    <th>Zip Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example static rows, replace with dynamic content in your app -->
+                <tr>
+                    <td>Dealer One</td>
+                    <td>San Francisco</td>
+                    <td>CA</td>
+                    <td>123 Market St</td>
+                    <td>94103</td>
+                </tr>
+                <tr>
+                    <td>Dealer Two</td>
+                    <td>New York</td>
+                    <td>NY</td>
+                    <td>456 Broadway</td>
+                    <td>10012</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer>
+        &copy; 2025 Full Stack Application Development Capstone Project
+    </footer>
+</body>
+</html>
