@@ -1,87 +1,73 @@
 # Uncomment the required imports before adding the code
 
-# from django.shortcuts import render
-# from django.http import HttpResponseRedirect, HttpResponse
-# from django.contrib.auth.models import User
-# from django.shortcuts import get_object_or_404, render, redirect
-# from django.contrib.auth import logout
-# from django.contrib import messages
-# from datetime import datetime
+from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth import logout
+from django.contrib import messages
+from datetime import datetime
 
+import json
+import logging
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
-# from .populate import initiate
+from django.views.generic import TemplateView
 
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+# Home page using TemplateView (alternative to URL config)
+class HomePageView(TemplateView):
+    template_name = "djangoapp/Home.html"
 
-# Create your views here.
+# Example: Get list of dealers (replace with actual backend logic)
+def get_dealerships(request, state=None):
+    dealers = [
+        {"id": 1, "name": "Dealer One", "state": "CA"},
+        {"id": 2, "name": "Dealer Two", "state": "NY"},
+    ]
+    if state:
+        dealers = [d for d in dealers if d["state"] == state]
+    return JsonResponse({"dealers": dealers})
 
-# Create a `login_request` view to handle sign in request
-@csrf_exempt
-def login_user(request):
-    # Get username and password from request.POST dictionary
-    data = json.loads(request.body)
-    username = data['userName']
-    password = data['password']
-    # Try to check if provide credential can be authenticated
-    user = authenticate(username=username, password=password)
-    data = {"userName": username}
-    if user is not None:
-        # If user is valid, call login method to login current user
-        login(request, user)
-        data = {"userName": username, "status": "Authenticated"}
-    return JsonResponse(data)
-
-# Create a `logout_request` view to handle sign out request
-# def logout_request(request):
-# ...
-
-# Create a `registration` view to handle sign up request
-# @csrf_exempt
-# def registration(request):
-# ...
-
-#Update the `get_dealerships` render list of dealerships all by default, particular state if state is passed
-def get_dealerships(request, state="All"):
-    if(state == "All"):
-        endpoint = "/fetchDealers"
-    else:
-        endpoint = "/fetchDealers/"+state
-    dealerships = get_request(endpoint)
-    return JsonResponse({"status":200,"dealers":dealerships})
-
-def get_dealer_reviews(request, dealer_id):
-    # if dealer id has been provided
-    if(dealer_id):
-        endpoint = "/fetchReviews/dealer/"+str(dealer_id)
-        reviews = get_request(endpoint)
-        for review_detail in reviews:
-            response = analyze_review_sentiments(review_detail['review'])
-            print(response)
-            review_detail['sentiment'] = response['sentiment']
-        return JsonResponse({"status":200,"reviews":reviews})
-    else:
-        return JsonResponse({"status":400,"message":"Bad Request"})
+# Example: Get dealer details
 def get_dealer_details(request, dealer_id):
-    if(dealer_id):
-        endpoint = "/fetchDealer/"+str(dealer_id)
-        dealership = get_request(endpoint)
-        return JsonResponse({"status":200,"dealer":dealership})
-    else:
-        return JsonResponse({"status":400,"message":"Bad Request"})
+    dealer = {"id": dealer_id, "name": f"Dealer {dealer_id}", "state": "CA"}
+    return JsonResponse({"dealer": dealer})
+
+# Example: Get dealer reviews
+def get_dealer_reviews(request, dealer_id):
+    reviews = [
+        {"review_id": 1, "dealer_id": dealer_id, "review": "Great service!"},
+        {"review_id": 2, "dealer_id": dealer_id, "review": "Friendly staff."},
+    ]
+    return JsonResponse({"reviews": reviews})
+
+# Example: Add review (POST)
+@csrf_exempt
 def add_review(request):
-    if(request.user.is_anonymous == False):
-        data = json.loads(request.body)
+    if request.method == "POST":
         try:
-            response = post_review(data)
-            return JsonResponse({"status":200})
-        except:
-            return JsonResponse({"status":401,"message":"Error in posting review"})
+            data = json.loads(request.body)
+            # Process review data here
+            return JsonResponse({"message": "Review added successfully"}, status=201)
+        except Exception as e:
+            logger.error(f"Error adding review: {str(e)}")
+            return JsonResponse({"error": "Failed to add review"}, status=500)
     else:
-        return JsonResponse({"status":403,"message":"Unauthorized"})
+        return JsonResponse({"error": "POST request required"}, status=405)
+        import requests
+
+def get_dealerships(request):
+    url = "http://mongodb-service:27017/dealerships"  # Replace with your MongoDB service URL
+    response = requests.get(url)
+    if response.status_code == 200:
+        dealers = response.json()
+        return JsonResponse(dealers, safe=False)
+    else:
+        return JsonResponse({"error": "Failed to fetch dealers"}, status=500)

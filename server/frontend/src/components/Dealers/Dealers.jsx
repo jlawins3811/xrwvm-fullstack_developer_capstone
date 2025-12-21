@@ -3,7 +3,7 @@ import "./Dealers.css";
 import "../assets/style.css";
 import Header from '../Header/Header';
 import review_icon from "../assets/reviewicon.png"
-
+import React, { useEffect, useState } from 'react';
 const Dealers = () => {
   const [dealersList, setDealersList] = useState([]);
   // let [state, setState] = useState("")
@@ -92,5 +92,60 @@ return(
   </div>
 )
 }
+function Dealers() {
+  const [dealers, setDealers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-export default Dealers
+  useEffect(() => {
+    // Fetch dealerships from backend API
+    fetch('/djangoapp/api/dealers/')  // Adjust URL if needed
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        setDealers(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <p>Loading dealers...</p>;
+  if (error) return <p>Error loading dealers: {error}</p>;
+
+  return (
+    <div>
+      <h1>Dealers List</h1>
+      <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <thead style={{ backgroundColor: '#007bff', color: 'white' }}>
+          <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+          </tr>
+        </thead>
+        <tbody>
+          {dealers.map(dealer => (
+            <tr key={dealer.id}>
+              <td>{dealer.full_name}</td>
+              <td>{dealer.address}</td>
+              <td>{dealer.city}</td>
+              <td>{dealer.state}</td>
+              <td>{dealer.zip}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default Dealers;
