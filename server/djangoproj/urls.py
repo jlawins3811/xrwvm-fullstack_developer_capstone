@@ -22,6 +22,6 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('djangoapp/', include('djangoapp.urls')),  # Include your app URLs
-    path('', TemplateView.as_view(template_name="djangoapp/Home.html")),
-    path('dealers/', TemplateView.as_view(template_name="djangoapp/index.html")),  # Dealers page
+    path('', TemplateView.as_view(template_name="djangoapp/Home.html")),  # Home page
+    path('dealers/', TemplateView.as_view(template_name="djangoapp/index.html")),  # Dealers page (React app entry)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

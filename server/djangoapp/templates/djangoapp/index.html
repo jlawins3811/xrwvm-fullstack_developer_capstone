@@ -37,62 +37,54 @@
             background-color: #007bff;
             color: white;
         }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        footer {
-            margin-top: 3rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Car Dealerships</h1>
+        <h1>Car Dealerships Portal</h1>
         <nav>
             <a href="/">Home</a>
             <a href="/dealers/">Dealers</a>
-            <a href="/login">Login</a>
+            <a href="/login/">Login</a>
         </nav>
     </header>
 
     <main>
-        <h2>Available Dealers</h2>
-        <p>Browse the list of trusted car dealerships near you.</p>
-
+        <h2>Dealers List</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Dealer Name</th>
+                    <th>Name</th>
                     <th>City</th>
                     <th>State</th>
                     <th>Address</th>
-                    <th>Zip Code</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- Example static rows, replace with dynamic content in your app -->
-                <tr>
-                    <td>Dealer One</td>
-                    <td>San Francisco</td>
-                    <td>CA</td>
-                    <td>123 Market St</td>
-                    <td>94103</td>
-                </tr>
-                <tr>
-                    <td>Dealer Two</td>
-                    <td>New York</td>
-                    <td>NY</td>
-                    <td>456 Broadway</td>
-                    <td>10012</td>
-                </tr>
+            <tbody id="dealers-table-body">
+                <!-- Dealer rows will be inserted here dynamically -->
             </tbody>
         </table>
     </main>
 
-    <footer>
-        &copy; 2025 Full Stack Application Development Capstone Project
-    </footer>
+    <script>
+        // Example data - replace with actual API call in your React app
+        const dealers = [
+            { name: "Best Cars", city: "New York", state: "NY", address: "123 Main St" },
+            { name: "Auto World", city: "Los Angeles", state: "CA", address: "456 Sunset Blvd" },
+            { name: "DriveTime", city: "Chicago", state: "IL", address: "789 Lakeshore Dr" }
+        ];
+
+        const tbody = document.getElementById('dealers-table-body');
+        dealers.forEach(dealer => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${dealer.name}</td>
+                <td>${dealer.city}</td>
+                <td>${dealer.state}</td>
+                <td>${dealer.address}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    </script>
 </body>
 </html>

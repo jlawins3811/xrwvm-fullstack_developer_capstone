@@ -2,150 +2,97 @@ import React, { useState, useEffect } from 'react';
 import "./Dealers.css";
 import "../assets/style.css";
 import Header from '../Header/Header';
-import review_icon from "../assets/reviewicon.png"
-import React, { useEffect, useState } from 'react';
+import review_icon from "../assets/reviewicon.png";
+
 const Dealers = () => {
   const [dealersList, setDealersList] = useState([]);
-  // let [state, setState] = useState("")
-  let [states, setStates] = useState([])
+  const [states, setStates] = useState([]);
 
-  // let root_url = window.location.origin
-  let dealer_url ="/djangoapp/get_dealers";
-  
-  let dealer_url_by_state = "/djangoapp/get_dealers/";
- 
-  const filterDealers = async (state) => {
-    dealer_url_by_state = dealer_url_by_state+state;
-    const res = await fetch(dealer_url_by_state, {
-      method: "GET"
-    });
-    const retobj = await res.json();
-    if(retobj.status === 200) {
-      let state_dealers = Array.from(retobj.dealers)
-      setDealersList(state_dealers)
-    }
-  }
+  // Backend API endpoints
+  const dealer_url = "/djangoapp/get_dealers"; // to get all dealers
+  const dealer_url_by_state_base = "/djangoapp/get_dealers/"; // to filter by state
 
-  const get_dealers = async ()=>{
-    const res = await fetch(dealer_url, {
-      method: "GET"
-    });
-    const retobj = await res.json();
-    if(retobj.status === 200) {
-      let all_dealers = Array.from(retobj.dealers)
-      let states = [];
-      all_dealers.forEach((dealer)=>{
-        states.push(dealer.state)
+  // Fetch all dealers
+  const getDealers = async () => {
+    try {
+      const res = await fetch(dealer_url, {
+        method: "GET",
       });
-
-      setStates(Array.from(new Set(states)))
-      setDealersList(all_dealers)
-    }
-  }
-  useEffect(() => {
-    get_dealers();
-  },[]);  
-
-
-let isLoggedIn = sessionStorage.getItem("username") != null ? true : false;
-return(
-  <div>
-      <Header/>
-
-     <table className='table'>
-      <tr>
-      <th>ID</th>
-      <th>Dealer Name</th>
-      <th>City</th>
-      <th>Address</th>
-      <th>Zip</th>
-      <th>
-      <select name="state" id="state" onChange={(e) => filterDealers(e.target.value)}>
-      <option value="" selected disabled hidden>State</option>
-      <option value="All">All States</option>
-      {states.map(state => (
-          <option value={state}>{state}</option>
-      ))}
-      </select>        
-
-      </th>
-      {isLoggedIn ? (
-          <th>Review Dealer</th>
-         ):<></>
+      const data = await res.json();
+      if (res.ok && data.status === 200) {
+        setDealersList(data.dealers);
+        // Optionally extract states from dealers for filtering
+        const uniqueStates = [...new Set(data.dealers.map(dealer => dealer.state))];
+        setStates(uniqueStates);
+      } else {
+        console.error("Failed to fetch dealers:", data);
       }
-      </tr>
-     {dealersList.map(dealer => (
-        <tr>
-          <td>{dealer['id']}</td>
-          <td><a href={'/dealer/'+dealer['id']}>{dealer['full_name']}</a></td>
-          <td>{dealer['city']}</td>
-          <td>{dealer['address']}</td>
-          <td>{dealer['zip']}</td>
-          <td>{dealer['state']}</td>
-          {isLoggedIn ? (
-            <td><a href={`/postreview/${dealer['id']}`}><img src={review_icon} className="review_icon" alt="Post Review"/></a></td>
-           ):<></>
-          }
-        </tr>
-      ))}
-     </table>;
-  </div>
-)
-}
-function Dealers() {
-  const [dealers, setDealers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    } catch (error) {
+      console.error("Error fetching dealers:", error);
+    }
+  };
+
+  // Filter dealers by state
+  const filterDealers = async (state) => {
+    try {
+      const res = await fetch(dealer_url_by_state_base + state, {
+        method: "GET",
+      });
+      const data = await res.json();
+      if (res.ok && data.status === 200) {
+        setDealersList(data.dealers);
+      } else {
+        console.error("Failed to filter dealers:", data);
+      }
+    } catch (error) {
+      console.error("Error filtering dealers:", error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch dealerships from backend API
-    fetch('/djangoapp/api/dealers/')  // Adjust URL if needed
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        setDealers(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
+    getDealers();
   }, []);
-
-  if (loading) return <p>Loading dealers...</p>;
-  if (error) return <p>Error loading dealers: {error}</p>;
 
   return (
     <div>
-      <h1>Dealers List</h1>
-      <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
-        <thead style={{ backgroundColor: '#007bff', color: 'white' }}>
+      <Header />
+      <h2>Dealers List</h2>
+
+      {/* State filter dropdown */}
+      <select onChange={(e) => filterDealers(e.target.value)} defaultValue="">
+        <option value="">All States</option>
+        {states.map((state) => (
+          <option key={state} value={state}>{state}</option>
+        ))}
+      </select>
+
+      {/* Dealers Table */}
+      <table>
+        <thead>
           <tr>
             <th>Name</th>
-            <th>Address</th>
-            <th>City</th>
             <th>State</th>
-            <th>Zip</th>
+            <th>Address</th>
+            <th>Reviews</th>
           </tr>
         </thead>
         <tbody>
-          {dealers.map(dealer => (
+          {dealersList.map((dealer) => (
             <tr key={dealer.id}>
-              <td>{dealer.full_name}</td>
-              <td>{dealer.address}</td>
-              <td>{dealer.city}</td>
+              <td>{dealer.name}</td>
               <td>{dealer.state}</td>
-              <td>{dealer.zip}</td>
+              <td>{dealer.address}</td>
+              <td>
+                <a href={`/dealer/${dealer.id}`}>
+                  <img src={review_icon} alt="reviews" />
+                </a>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
   );
-}
+};
 
 export default Dealers;
