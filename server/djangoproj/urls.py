@@ -14,14 +14,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path, include
 from django.views.generic import TemplateView
+from django.conf import settings
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('djangoapp/', include('djangoapp.urls')),  # Include your app URLs
-    path('', TemplateView.as_view(template_name="djangoapp/Home.html")),  # Home page
-    path('dealers/', TemplateView.as_view(template_name="djangoapp/index.html")),  # Dealers page (React app entry)
+    path('djangoapp/', include('djangoapp.urls')),  # API and backend routes
+
+    # React frontend routes serving index.html
+    path('', TemplateView.as_view(template_name="index.html")),
+    path('dealers/', TemplateView.as_view(template_name="index.html")),
+    path('dealer/<int:dealer_id>/', TemplateView.as_view(template_name="index.html")),
+    path('postreview/<int:dealer_id>/', TemplateView.as_view(template_name="index.html")),
+
+    # Catch-all route for React, excluding static and api paths
+    re_path(r'^(?!static|api).*$',
+        TemplateView.as_view(template_name="index.html")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
