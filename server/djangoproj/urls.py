@@ -22,7 +22,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('djangoapp/', include('djangoapp.urls')),  # API and backend routes
+    path('djangoapp/', include('djangoapp.urls')), # API and backend routes
 
     # React frontend routes serving index.html
     path('', TemplateView.as_view(template_name="index.html")),
@@ -31,6 +31,8 @@ urlpatterns = [
     path('postreview/<int:dealer_id>/', TemplateView.as_view(template_name="index.html")),
 
     # Catch-all route for React, excluding static and api paths
-    re_path(r'^(?!static|api).*$',
+     re_path(r'^(?!static|djangoapp).*$',
         TemplateView.as_view(template_name="index.html")),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 

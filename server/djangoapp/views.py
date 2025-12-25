@@ -16,6 +16,11 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+from pymongo import MongoClient
+import os
+client = MongoClient(os.getenv('MONGO_URI'))
+db = client['yourdbname']
+reviews_collection = db['reviews']
 
 
 # Get an instance of a logger
@@ -61,8 +66,15 @@ def get_dealer_details(request, dealer_id):
     return JsonResponse({"dealer": dealer})
 
 # Example: Get dealer reviews
+import json
+import logging
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+logger = logging.getLogger(__name__)
+
 def get_dealer_reviews(request, dealer_id):
-    # Sample reviews data; replace with real database or MongoDB queries
+    # Sample reviews data; replace with real DB or MongoDB queries
     reviews = [
         {"review_id": 1, "dealer_id": dealer_id, "user_name": "Alice", "review": "Great service!", "sentiment": "positive", "purchase_date": "2023-01-15"},
         {"review_id": 2, "dealer_id": dealer_id, "user_name": "Bob", "review": "Friendly staff.", "sentiment": "neutral", "purchase_date": "2023-02-10"},
@@ -72,25 +84,17 @@ def get_dealer_reviews(request, dealer_id):
 # Example: Add review (POST)
 @csrf_exempt
 def add_review(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            # Extract review fields from data, e.g.:
-            # user_name = data.get('user_name')
-            # dealer_id = data.get('dealer_id')
-            # review_text = data.get('review')
-            # sentiment = data.get('sentiment')
-            # purchase_date = data.get('purchase_date')
-            
-            # TODO: Save the review data to your database or MongoDB here
-            
+            # TODO: Process and save the review data to DB/MongoDB here
+
             return JsonResponse({"message": "Review added successfully"}, status=201)
         except Exception as e:
             logger.error(f"Error adding review: {str(e)}")
             return JsonResponse({"error": "Failed to add review"}, status=500)
     else:
-        return JsonResponse({"error": "POST request required"}, status=405)
-
+        return JsonResponse({"error": "Invalid method"}, status=405)
         import requests
 
 def get_dealerships(request):

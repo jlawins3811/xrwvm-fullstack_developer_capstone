@@ -1,74 +1,87 @@
-.navcontainer{
+/* login.css */
+
+/* Reset some basic styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f5;
+  height: 100vh;
   display: flex;
-  flex: 1;
-
-  flex-direction: row;
-  margin: auto;
-  margin-top: 2%;
-  background-color: rgb(97, 64, 128);
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
 }
 
-.navitems{
-  display: flex;
-  flex-direction: row;
-  padding: 20px;
-  flex: 1;
-  justify-content: flex-start;
-  justify-self: center;
-}
-
-.nav_item{
-  margin-left:15px;
-  font-size: 20px;
-  color: azure;
-  align-self: center;
-}
-
-.input_panel {
-  display: flex;
-  flex-direction: row;
-  padding: 20px;
-  flex: 1;
-  justify-content: flex-end;
-  justify-self: center;
-}
-
-.input_field{
-  height:40px;
-  width:200px; 
-  font-size: medium;
-  margin:.5cm;
-}
-
-
-.action_button{
-  cursor: pointer;
-  font-size: large;
-  color: rgb(97, 64, 128);
+/* Container for the login form */
+.login-container {
+  background-color: white;
+  padding: 2.5rem 3rem;
   border-radius: 10px;
-  height:40px;
-  padding-left:.5cm;
-  padding-right: .5cm;
-  margin: .5cm;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
 }
 
-.submit:hover {
-  background-color: wheat;
+/* Form heading */
+.login-container h2 {
+  margin-bottom: 1.5rem;
+  color: #004080;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.8rem;
 }
 
-.small_header{
-  font: 30px sans-serif;
-  color:azure;
-  margin: .5cm;
+/* Input fields */
+.login-container input[type="text"],
+.login-container input[type="password"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
 }
 
-.username{
-  font: 30px sans-serif;
-  color:azure;
-  margin: .5cm;
-  justify-content: 'flex-end';
-  align-self:flex-end;
+.login-container input[type="text"]:focus,
+.login-container input[type="password"]:focus {
+  border-color: #0066cc;
+  outline: none;
+}
+
+/* Submit button */
+.login-container button {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-container button:hover {
+  background-color: #004a99;
+}
+
+/* Error message */
+.login-error {
+  color: #cc0000;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 2rem 1.5rem;
+    max-width: 90%;
+  }
 }
 
 .login_panel {
