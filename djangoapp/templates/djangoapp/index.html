@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Car Dealerships - Dealers List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            margin-bottom: 2rem;
+        }
+        nav a {
+            margin-right: 1rem;
+            text-decoration: none;
+            color: #007bff;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px #ccc;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Car Dealerships Portal</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/dealers/">Dealers</a>
+            <a href="/login/">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Dealers List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody id="dealers-table-body">
+                <!-- Dealer rows will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        // Example data - replace with actual API call in your React app
+        const dealers = [
+            { name: "Best Cars", city: "New York", state: "NY", address: "123 Main St" },
+            { name: "Auto World", city: "Los Angeles", state: "CA", address: "456 Sunset Blvd" },
+            { name: "DriveTime", city: "Chicago", state: "IL", address: "789 Lakeshore Dr" }
+        ];
+
+        const tbody = document.getElementById('dealers-table-body');
+        dealers.forEach(dealer => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${dealer.name}</td>
+                <td>${dealer.city}</td>
+                <td>${dealer.state}</td>
+                <td>${dealer.address}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    </script>
+</body>
+</html>
