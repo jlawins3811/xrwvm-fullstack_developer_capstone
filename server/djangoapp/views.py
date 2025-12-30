@@ -38,6 +38,13 @@ def get_dealerships(request, state=None):
         {"id": 2, "name": "Dealer Two", "state": "NY", "address": "456 Broadway, NY"},
         {"id": 3, "name": "Dealer Three", "state": "CA", "address": "789 Sunset Blvd, CA"},
     ]
+    
+    if state:
+        filtered_dealers = [dealer for dealer in dealers if dealer["state"] == state]
+    else:
+        filtered_dealers = dealers
+
+    return JsonResponse({"dealers": filtered_dealers})
 
     # Filter dealers by state if state parameter is provided
     if state:
@@ -98,10 +105,9 @@ def add_review(request):
         import requests
 
 def get_dealerships(request):
-    url = "http://mongodb-service:27017/dealerships"  # Replace with your MongoDB service URL
-    response = requests.get(url)
-    if response.status_code == 200:
-        dealers = response.json()
-        return JsonResponse(dealers, safe=False)
-    else:
-        return JsonResponse({"error": "Failed to fetch dealers"}, status=500)
+    client = MongoClient("mongodb://mongodb-service:27017/")
+    db = client['your_database_name']
+    collection = db['dealerships']
+    dealers = list(collection.find({}, {'_id': 0}))  # Exclude MongoDB internal _id
+    client.close()
+    return JsonResponse(dealers, safe=False)

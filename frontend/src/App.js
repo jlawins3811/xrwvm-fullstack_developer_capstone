@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './components/Home';
+import Home from './components/Home/Home';
 import Dealers from './components/Dealers/Dealers';
 import Dealer from './components/Dealers/Dealer';
 import PostReview from './components/Dealers/PostReview';

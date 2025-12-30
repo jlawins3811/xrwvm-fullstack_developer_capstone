@@ -10,10 +10,11 @@ const Dealers = () => {
   
 
   // Backend API endpoints
-  const dealer_url = "/djangoapp/get_dealers"; // to get all dealers
+  
   const dealer_url_by_state_base = "/djangoapp/get_dealers/"; // to filter by state
-
-  // Fetch all dealers
+  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
+  const dealer_url = `${backendURL}/get_dealers/`;
+  
   const getDealers = async () => {
     try {
       const res = await fetch(dealer_url, {
@@ -22,7 +23,7 @@ const Dealers = () => {
       const data = await res.json();
       if (res.ok && data.status === 200) {
         setDealersList(data.dealers);
-        // Optionally extract states from dealers for filtering
+        // Extract unique states for filtering if needed
         const uniqueStates = [...new Set(data.dealers.map(dealer => dealer.state))];
         setStates(uniqueStates);
       } else {
@@ -51,16 +52,23 @@ const Dealers = () => {
   };
 
   useEffect(() => {
-    fetch(`${backendUrl}/get_dealers/`)
+    fetch(`${backendURL}/get_dealers/`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then(data => setDealers(data))
+      .then(data => {
+        if (data.status === 200) {
+          setDealers(data.dealers);
+        } else {
+          console.error('Backend returned error:', data);
+        }
+      })
       .catch(error => console.error('Error fetching dealers:', error));
-  }, [backendUrl]);
+  }, [backendURL]);
+
 
   return (
     <div>
@@ -103,5 +111,30 @@ const Dealers = () => {
     </div>
   );
 };
+return (
+    <div className="dealers-container">
+      <h2>Dealers List</h2>
+      <table className="dealers-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+          </tr>
+        </thead>
+        <tbody>
+          {dealers.map(dealer => (
+            <tr key={dealer.id}>
+              <td data-label="Name">{dealer.name}</td>
+              <td data-label="City">{dealer.city}</td>
+              <td data-label="State">{dealer.state}</td>
+              <td data-label="Zip">{dealer.zip}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 
 export default Dealers;

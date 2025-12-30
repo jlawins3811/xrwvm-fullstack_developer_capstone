@@ -8,8 +8,7 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from datetime import datetime
 
-import json
-import logging
+
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
 import logging
@@ -38,6 +37,13 @@ def get_dealerships(request, state=None):
         {"id": 2, "name": "Dealer Two", "state": "NY", "address": "456 Broadway, NY"},
         {"id": 3, "name": "Dealer Three", "state": "CA", "address": "789 Sunset Blvd, CA"},
     ]
+    
+    if state:
+        filtered_dealers = [dealer for dealer in dealers if dealer["state"] == state]
+    else:
+        filtered_dealers = dealers
+
+    return JsonResponse({"dealers": filtered_dealers})
 
     # Filter dealers by state if state parameter is provided
     if state:
@@ -97,11 +103,23 @@ def add_review(request):
         return JsonResponse({"error": "Invalid method"}, status=405)
         import requests
 
+from django.http import JsonResponse
+from pymongo import MongoClient
+import os
+
 def get_dealerships(request):
-    url = "http://mongodb-service:27017/dealerships"  # Replace with your MongoDB service URL
-    response = requests.get(url)
-    if response.status_code == 200:
-        dealers = response.json()
-        return JsonResponse(dealers, safe=False)
-    else:
-        return JsonResponse({"error": "Failed to fetch dealers"}, status=500)
+    # Connect to MongoDB service inside Kubernetes cluster
+    mongo_uri = os.getenv('MONGODB_URI', 'mongodb://mongodb-service:27017/')
+    client = MongoClient(mongo_uri)
+    
+    # Replace 'your_database_name' with your actual MongoDB database name
+    db = client['your_database_name']
+    collection = db['dealerships']
+    
+    # Query all dealerships; exclude the MongoDB internal '_id' field
+    dealers = list(collection.find({}, {'_id': 0}))
+    
+    client.close()
+    
+    # Return the list of dealers as JSON response
+    return JsonResponse(dealers, safe=False)

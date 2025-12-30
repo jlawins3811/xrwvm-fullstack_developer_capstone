@@ -22,16 +22,17 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('djangoapp/', include('djangoapp.urls')), # API and backend routes
+    path('djangoapp/', include('djangoapp.urls')),  # Backend API routes
 
-    # React frontend routes serving index.html
+    # React frontend routes serving index.html for client-side routing
     path('', TemplateView.as_view(template_name="index.html")),
     path('dealers/', TemplateView.as_view(template_name="index.html")),
     path('dealer/<int:dealer_id>/', TemplateView.as_view(template_name="index.html")),
     path('postreview/<int:dealer_id>/', TemplateView.as_view(template_name="index.html")),
 
-    # Catch-all route for React, excluding static and api paths
-     re_path(r'^(?!static|djangoapp).*$',
+    # Catch-all route for React to handle other frontend routes
+    # Excludes static and API paths to prevent conflicts
+    re_path(r'^(?!static|djangoapp).*$',
         TemplateView.as_view(template_name="index.html")),
 ]
 if settings.DEBUG:
