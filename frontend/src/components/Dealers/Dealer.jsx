@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import "./Dealers.css";
 import "../assets/style.css";
@@ -9,58 +9,57 @@ import review_icon from "../assets/reviewbutton.png";
 import Header from '../Header/Header';
 
 const Dealer = () => {
-  const [dealer, setDealer] = useState({});
-  const [reviews, setReviews] = useState([]);
-  const [unreviewed, setUnreviewed] = useState(false);
-
-  const params = useParams();
-  const id = params.id;
-
+    const [dealer, setDealer] = useState({});
+    const [reviews, setReviews] = useState([]);
+    const [unreviewed, setUnreviewed] = useState(false);
+  
+    const params = useParams();
+    const id = params.id;
   // Assuming backend URLs are relative to root URL
+ 
   const root_url = window.location.origin + "/";
   const dealer_url = `${root_url}djangoapp/dealer/${id}`;
   const reviews_url = `${root_url}djangoapp/reviews/dealer/${id}`;
   const post_review_url = `/postreview/${id}`;
 
   // Fetch dealer details
-  const getDealer = async () => {
+  const getDealer = useCallback(async () => {
     try {
       const res = await fetch(dealer_url);
       if (res.ok) {
         const data = await res.json();
         setDealer(data);
       } else {
-        console.error("Failed to fetch dealer details");
+        console.error("Failed to fetch dealer data");
       }
     } catch (error) {
       console.error("Error fetching dealer:", error);
     }
-  };
+  }, [dealer_url]);
 
   // Fetch dealer reviews
-  const getReviews = async () => {
+  const getReviews = useCallback(async () => {
     try {
       const res = await fetch(reviews_url);
       if (res.ok) {
         const data = await res.json();
-        if (data.length === 0) {
-          setUnreviewed(true);
-        } else {
-          setReviews(data);
-          setUnreviewed(false);
-        }
+        setReviews(data);
       } else {
         console.error("Failed to fetch reviews");
       }
     } catch (error) {
       console.error("Error fetching reviews:", error);
     }
-  };
+  }, [reviews_url]);
+
 
   useEffect(() => {
     getDealer();
     getReviews();
-  }, [id]);
+  }, [getDealer, getReviews]);
+
+  if (!dealer || Object.keys(dealer).length === 0) return <div>Loading dealer details...</div>;
+
 
   // Helper function to select review sentiment icon
   const getSentimentIcon = (sentiment) => {
@@ -80,26 +79,23 @@ const Dealer = () => {
     <div>
       <Header />
       <h2>{dealer.name}</h2>
-      <p>{dealer.address}</p>
-      <p>{dealer.city}, {dealer.state} {dealer.zip}</p>
-
+      {/* Render dealer info here */}
       <h3>Reviews</h3>
       {unreviewed && <p>No reviews yet for this dealer.</p>}
 
       <ul>
+      {reviews.length === 0 && <li>No reviews available.</li>}
         {reviews.map((review) => (
           <li key={review.id}>
-            <img src={getSentimentIcon(review.sentiment)} alt={review.sentiment} style={{width: '20px', marginRight: '8px'}} />
-            <strong>{review.user_name}</strong>: {review.review}
-            <br />
-            <small>{new Date(review.purchase_date).toLocaleDateString()}</small>
+            {review.comment}
+            {/* Add sentiment icons or other review details as needed */}
           </li>
         ))}
       </ul>
 
       <Link to={post_review_url}>
-        <img src={review_icon} alt="Post Review" />
-        <span>Post a Review</span>
+        <img src={review_icon} alt="Add Review" />
+        Add a Review
       </Link>
     </div>
   );

@@ -3,51 +3,63 @@ import "./Dealers.css";
 import "../assets/style.css";
 import Header from '../Header/Header';
 import review_icon from "../assets/reviewicon.png";
+import { Link } from 'react-router-dom';
 
 const Dealers = () => {
-    const [dealers, setDealers] = useState([]);
-    const backendUrl = process.env.REACT_APP_BACKEND_URL;
-  
+  const [dealers, setDealers] = useState([]);
+  const [filteredDealers, setFilteredDealers] = useState([]);
+  const [states, setStates] = useState([]);
 
-  // Backend API endpoints
-  
-  const dealer_url_by_state_base = "/djangoapp/get_dealers/"; // to filter by state
+  // Backend URL from environment or default
   const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
   const dealer_url = `${backendURL}/get_dealers/`;
-  
+
+  // Fetch dealers from backend
   const getDealers = async () => {
     try {
-      const res = await fetch(dealer_url, {
-        method: "GET",
-      });
+      const res = await fetch(dealer_url);
       const data = await res.json();
       if (res.ok && data.status === 200) {
-        setDealersList(data.dealers);
-        // Extract unique states for filtering if needed
+        setDealers(data.dealers);
+        setFilteredDealers(data.dealers);
+
+        // Extract unique states from dealer data
         const uniqueStates = [...new Set(data.dealers.map(dealer => dealer.state))];
         setStates(uniqueStates);
       } else {
-        console.error("Failed to fetch dealers:", data);
+        console.error('Backend returned error:', data);
       }
     } catch (error) {
-      console.error("Error fetching dealers:", error);
+      console.error('Error fetching dealers:', error);
     }
   };
 
-  // Filter dealers by state
-  const filterDealers = async (state) => {
-    try {
-      const res = await fetch(dealer_url_by_state_base + state, {
-        method: "GET",
-      });
-      const data = await res.json();
-      if (res.ok && data.status === 200) {
-        setDealersList(data.dealers);
-      } else {
-        console.error("Failed to filter dealers:", data);
-      }
-    } catch (error) {
-      console.error("Error filtering dealers:", error);
+  useEffect(() => {
+    fetch(`${backendURL}/get_dealers/`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 200) {
+          setDealers(data.dealers);
+          setFilteredDealers(data.dealers);
+
+          // Extract unique states from dealers
+          const uniqueStates = [...new Set(data.dealers.map(d => d.state))];
+          setStates(uniqueStates);
+        } else {
+          console.error('Backend returned error:', data);
+        }
+      })
+      .catch(error => console.error('Error fetching dealers:', error));
+  }, [backendURL]);
+
+
+  // Filter dealers by selected state
+  const filterDealers = (state) => {
+    if (!state) {
+      setFilteredDealers(dealers);
+    } else {
+      const filtered = dealers.filter(dealer => dealer.state === state);
+      setFilteredDealers(filtered);
     }
   };
 
@@ -83,31 +95,13 @@ const Dealers = () => {
         ))}
       </select>
 
-      {/* Dealers Table */}
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>State</th>
-            <th>Address</th>
-            <th>Reviews</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dealersList.map(dealer => (
-            <tr key={dealer.id}>
-              <td>{dealer.name}</td>
-              <td>{dealer.state}</td>
-              <td>{dealer.address}</td>
-              <td>
-                <a href={`/dealer/${dealer.id}`}>
-                  <img src={review_icon} alt="reviews" />
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ul>
+        {filteredDealers.map(dealer => (
+          <li key={dealer.id}>
+            <Link to={`/dealer/${dealer.id}`}>{dealer.name}</Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

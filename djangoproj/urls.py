@@ -18,11 +18,10 @@ from django.urls import path, re_path, include
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf import settings
-
+from django.contrib import admin
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('djangoapp/', include('djangoapp.urls')),  # Backend API routes
+     path('admin/', admin.site.urls),
+     path('djangoapp/', include('djangoapp.urls')),  # Backend API routes
 
     # React frontend routes serving index.html for client-side routing
     path('', TemplateView.as_view(template_name="index.html")),
@@ -32,7 +31,7 @@ urlpatterns = [
 
     # Catch-all route for React to handle other frontend routes
     # Excludes static and API paths to prevent conflicts
-    re_path(r'^(?!static|djangoapp).*$',
+     re_path(r'^(?!static|djangoapp).*$',
         TemplateView.as_view(template_name="index.html")),
 ]
 if settings.DEBUG:
