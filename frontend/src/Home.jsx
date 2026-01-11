@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+    const backendURL = process.env.REACT_APP_BACKEND_URL || 'https://your-backend-url';
 
     fetch(`${backendURL}/get_dealers/`)
       .then((res) => res.json())
@@ -20,10 +21,10 @@ const Home = () => {
   }, []);
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#f0f0f0', minHeight: '100vh' }}>
+    <div style={{ margin: '2rem' }}>
       <h1>Welcome to the Car Dealerships Portal</h1>
       <nav>
-        <a href="/">Home</a> | <a href="/dealers">Dealers</a> | <a href="/login">Login</a>
+        <Link to="/">Home</Link> | <Link to="/dealers">Dealers</Link> | <Link to="/login">Login</Link>
       </nav>
       <p>Find Trusted Car Dealerships Near You</p>
       <p>Explore reviews, browse dealer information, and share your experiences.</p>
@@ -31,17 +32,25 @@ const Home = () => {
 
       <h2>Dealers List</h2>
       {loading ? (
-        <p>Loading dealers...</p>
-      ) : dealers.length > 0 ? (
-        <ul>
-          {dealers.map((dealer) => (
-            <li key={dealer.id}>
-              <strong>{dealer.full_name}</strong> — {dealer.city}, {dealer.state}
-            </li>
-          ))}
-        </ul>
+        <p>Loading dealers preview...</p>
       ) : (
-        <p>No dealers found.</p>
+        <div>
+          <h2>Dealers Preview</h2>
+          {dealers.length === 0 ? (
+            <p>No dealers available.</p>
+          ) : (
+            <ul>
+              {dealers.slice(0, 5).map((dealer) => (
+                <li key={dealer.id}>
+                  <Link to={`/dealer/${dealer.id}`}>{dealer.full_name}</Link> — {dealer.city}, {dealer.state}
+                </li>
+              ))}
+            </ul>
+          )}
+          <p>
+            <Link to="/dealers">View All Dealers</Link>
+          </p>
+        </div>
       )}
     </div>
   );
