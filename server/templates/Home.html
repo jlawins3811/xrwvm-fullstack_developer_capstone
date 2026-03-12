@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home Page</title>
+    <!-- You can link your CSS files here if needed -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Home Page</h1>
+    </header>
+
+    <main>
+        <p>This is the main landing page of your Full Stack Application Development Capstone Project.</p>
+        <p>Use this page to navigate to other parts of your app.</p>
+        <nav>
+            <ul>
+                <li><a href="{% url 'djangoapp:index' %}">Django App</a></li>
+                <li><a href="/dealers/">Dealers Page</a></li>
+                <li><a href="/admin/">Admin</a></li>
+            </ul>
+        </nav>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Your Name or Company</p>
+    </footer>
+</body>
+</html>

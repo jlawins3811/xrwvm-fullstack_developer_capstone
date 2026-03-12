@@ -14,14 +14,18 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 # from .populate import initiate
+from django.contrib.auth import logout
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+from django.shortcuts import render
 
-# Create your views here.
-
+def index(request):
+    return render(request, 'Home.html')
 # Create a `login_request` view to handle sign in request
 @csrf_exempt
 def login_user(request):
@@ -38,28 +42,50 @@ def login_user(request):
         data = {"userName": username, "status": "Authenticated"}
     return JsonResponse(data)
 
-# Create a `logout_request` view to handle sign out request
-# def logout_request(request):
-# ...
+@csrf_exempt
+def logout_user(request):
+    logout(request)
+    return JsonResponse({"status": "Logged out"})
 
 # Create a `registration` view to handle sign up request
 # @csrf_exempt
 # def registration(request):
 # ...
 
-# # Update the `get_dealerships` view to render the index page with
-# a list of dealerships
-# def get_dealerships(request):
-# ...
+from django.http import JsonResponse
 
-# Create a `get_dealer_reviews` view to render the reviews of a dealer
-# def get_dealer_reviews(request,dealer_id):
-# ...
+def get_dealers(request):
+    # This is a placeholder response, replace with your actual logic
+    dealers = [
+        {"id": 1, "name": "Dealer One"},
+        {"id": 2, "name": "Dealer Two"},
+    ]
+    return JsonResponse({"dealers": dealers})
+
+from django.http import JsonResponse
+
+def get_dealer_reviews(request):
+    # Your code to get dealer reviews here
+    data = {"reviews": []}  # Example placeholder data
+    return JsonResponse(data)
 
 # Create a `get_dealer_details` view to render the dealer details
 # def get_dealer_details(request, dealer_id):
 # ...
 
-# Create a `add_review` view to submit a review
-# def add_review(request):
-# ...
+@csrf_exempt
+def add_review(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            # Extract review details from data, for example:
+            review_text = data.get('review')
+            rating = data.get('rating')
+            # You would typically save this review to your database here
+            
+            # Return success response
+            return JsonResponse({'message': 'Review added successfully'}, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    else:
+        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)

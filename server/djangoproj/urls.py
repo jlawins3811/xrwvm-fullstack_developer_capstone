@@ -18,9 +18,11 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from django.conf import settings
+from djangoapp import views  # Import views here
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('djangoapp/', include('djangoapp.urls')),
-    path('', TemplateView.as_view(template_name="Home.html")),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('', views.index, name='index'),  # Use views.index as home page
+    path('dealers/', TemplateView.as_view(template_name="index.html"), name='dealers'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
