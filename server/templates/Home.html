@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dealer Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .dealer-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .dealer-item {
+            border: 1px solid #ccc;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .dealer-item h2 {
+            margin: 0 0 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dealer Information</h1>
+
+    {% if dealers %}
+        <ul class="dealer-list">
+            {% for dealer in dealers %}
+                <li class="dealer-item">
+                    <h2>{{ dealer.full_name }}</h2>
+                    <p><strong>Address:</strong> {{ dealer.address }}</p>
+                    <p><strong>City:</strong> {{ dealer.city }}</p>
+                    <p><strong>State:</strong> {{ dealer.state }}</p>
+                    <p><strong>Zip:</strong> {{ dealer.zip }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No dealers found.</p>
+    {% endif %}
+</body>
+</html>

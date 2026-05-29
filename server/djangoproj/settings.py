@@ -61,8 +61,8 @@ ROOT_URLCONF = 'djangoproj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [BASE_DIR / 'templates'],  # This points to a top-level "templates" folder
+        'APP_DIRS': True,  # Enables searching inside each app's "templates" folder
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -124,15 +124,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')
+STATIC_ROOT = BASE_DIR / 'server' / 'staticfiles'  # Collect static files here
+
+
+# Media files (uploads)
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'server' / 'media'  # Media uploads stored here
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATICFILES_DIRS = []
+STATICFILES_DIRS = [BASE_DIR / 'server' / 'static']  # Static files during development
 
